@@ -23,7 +23,17 @@ function ProductForm({ existingProduct, onSave, onCancel }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct(prev => ({ ...prev, [name]: value }));
+    setProduct(prev => (
+      { 
+        ...prev,
+        [name]:
+          name === 'price' 
+          ? parseFloat(value)||0
+          : name === 'stock'
+          ? parseInt(value,10)||0
+          :value
+      }
+      ));
   };
 
   const handleSubmit = async (e) => {

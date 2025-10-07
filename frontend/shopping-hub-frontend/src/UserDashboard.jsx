@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { getAuthHeader, getUsername, logout } from './authUtils';
+import ProductList from './ProductList';
 
 function UserDashboard({ onLogout }) {
   const [message, setMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('browse'); // Default to browse products
   const username = getUsername();
 
   const fetchUserData = async () => {
@@ -12,8 +14,7 @@ function UserDashboard({ onLogout }) {
         headers: getAuthHeader()
       });
       setMessage(response.data);
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+    } catch {
       setMessage('Failed to fetch user data. Please login again.');
     }
   };
@@ -28,43 +29,116 @@ function UserDashboard({ onLogout }) {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <header style={{ borderBottom: '2px solid #17a2b8', paddingBottom: '10px', marginBottom: '20px' }}>
-        <h2>Customer Dashboard</h2>
-        <p>Welcome, <strong>{username}</strong>! Start shopping for amazing products.</p>
+      <header style={{ borderBottom: '2px solid #007bff', paddingBottom: '10px', marginBottom: '20px' }}>
+        <h2>User Dashboard</h2>
+        <p>Welcome, <strong>{username}</strong>! Browse and shop for products.</p>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-        {/* Shopping Section */}
-        <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
-          <h3>Shopping</h3>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>Browse Products</button>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>Search Products</button>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>View Categories</button>
-        </div>
-
-        {/* Cart & Orders Section */}
-        <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
-          <h3>Cart & Orders</h3>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>View Cart</button>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>My Orders</button>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>Order History</button>
-        </div>
-
-        {/* Account Section */}
-        <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
-          <h3>Account</h3>
-          <button onClick={fetchUserData} style={{ margin: '5px', padding: '8px 12px' }}>
-            Test User Access
-          </button>
-          <button style={{ margin: '5px', padding: '8px 12px' }}>Update Profile</button>
-          <button onClick={handleLogout} style={{ margin: '5px', padding: '8px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none' }}>
-            Logout
-          </button>
-        </div>
+      {/* Navigation Tabs */}
+      <div style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
+        <button 
+          onClick={() => setActiveTab('browse')}
+          style={{ 
+            padding: '10px 20px', 
+            backgroundColor: activeTab === 'browse' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'browse' ? 'white' : '#333',
+            border: '1px solid #ddd',
+            borderBottom: 'none',
+            cursor: 'pointer',
+            marginRight: '5px'
+          }}
+        >
+          Browse Products
+        </button>
+        <button 
+          onClick={() => setActiveTab('cart')}
+          style={{ 
+            padding: '10px 20px', 
+            backgroundColor: activeTab === 'cart' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'cart' ? 'white' : '#333',
+            border: '1px solid #ddd',
+            borderBottom: 'none',
+            cursor: 'pointer',
+            marginRight: '5px'
+          }}
+        >
+          My Cart
+        </button>
+        <button 
+          onClick={() => setActiveTab('orders')}
+          style={{ 
+            padding: '10px 20px', 
+            backgroundColor: activeTab === 'orders' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'orders' ? 'white' : '#333',
+            border: '1px solid #ddd',
+            borderBottom: 'none',
+            cursor: 'pointer',
+            marginRight: '5px'
+          }}
+        >
+          My Orders
+        </button>
+        <button 
+          onClick={() => setActiveTab('account')}
+          style={{ 
+            padding: '10px 20px', 
+            backgroundColor: activeTab === 'account' ? '#007bff' : '#f8f9fa',
+            color: activeTab === 'account' ? 'white' : '#333',
+            border: '1px solid #ddd',
+            borderBottom: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          Account
+        </button>
       </div>
 
+      {/* Tab Content */}
+      {activeTab === 'browse' && (
+        <ProductList />
+      )}
+
+      {activeTab === 'cart' && (
+        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px', textAlign: 'center' }}>
+          <h3>Shopping Cart</h3>
+          <p>Cart functionality coming soon!</p>
+        </div>
+      )}
+
+      {activeTab === 'orders' && (
+        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px', textAlign: 'center' }}>
+          <h3>My Orders</h3>
+          <p>Order history coming soon!</p>
+        </div>
+      )}
+
+      {activeTab === 'account' && (
+        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px' }}>
+          <h3>Account Management</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxWidth: '300px' }}>
+            <button 
+              onClick={fetchUserData} 
+              style={{ padding: '10px', backgroundColor: '#17a2b8', color: 'white', border: 'none', borderRadius: '4px' }}
+            >
+              Test User Access
+            </button>
+            <button 
+              style={{ padding: '10px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px' }}
+            >
+              Update Profile
+            </button>
+            <button 
+              onClick={handleLogout} 
+              style={{ padding: '10px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+
       {message && (
-        <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#f8f9fa', border: '1px solid #ddd' }}>
+        <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', border: '1px solid #ddd', borderRadius: '4px' }}>
           <p>{message}</p>
         </div>
       )}
