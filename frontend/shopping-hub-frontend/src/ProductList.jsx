@@ -37,7 +37,7 @@ function ProductList() {
     if (searchTerm) {
       filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -50,8 +50,23 @@ function ProductList() {
 
   const categories = [...new Set(products.map(product => product.category))];
 
-  const handleAddToCart = (product) => {
-    alert(`Added "${product.name}" to cart! (Cart feature coming soon)`);
+  const handleAddToCart = async (product) => {
+    try {
+      // For now using userId = 1, later get from auth
+      await axios.post(
+        'http://localhost:8081/api/cart/add',
+        {
+          userId: 1,
+          productId: product.id,
+          quantity: 1
+        },
+        { headers: getAuthHeader() }
+      );
+      alert(`Added "${product.name}" to cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add to cart. Please try again.');
+    }
   };
 
   return (
@@ -59,12 +74,12 @@ function ProductList() {
       <h2>Browse Products</h2>
 
       {/* Search and Filter Section */}
-      <div style={{
-        display: 'flex',
-        gap: '15px',
-        marginBottom: '30px',
-        padding: '20px',
-        backgroundColor: '#f8f9fa',
+      <div style={{ 
+        display: 'flex', 
+        gap: '15px', 
+        marginBottom: '30px', 
+        padding: '20px', 
+        backgroundColor: '#f8f9fa', 
         borderRadius: '8px',
         flexWrap: 'wrap'
       }}>
@@ -74,23 +89,24 @@ function ProductList() {
             placeholder="Search products..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px',
-              border: '1px solid #ddd',
+            style={{ 
+              width: '100%', 
+              padding: '10px', 
+              border: '1px solid #ddd', 
               borderRadius: '4px',
               fontSize: '16px'
             }}
           />
         </div>
+        
         <div style={{ minWidth: '150px' }}>
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '10px',
-              border: '1px solid #ddd',
+            style={{ 
+              width: '100%', 
+              padding: '10px', 
+              border: '1px solid #ddd', 
               borderRadius: '4px',
               fontSize: '16px'
             }}
@@ -101,13 +117,14 @@ function ProductList() {
             ))}
           </select>
         </div>
-        <button
+        
+        <button 
           onClick={() => { setSearchTerm(''); setSelectedCategory(''); }}
-          style={{
-            padding: '10px 15px',
-            backgroundColor: '#6c757d',
-            color: 'white',
-            border: 'none',
+          style={{ 
+            padding: '10px 15px', 
+            backgroundColor: '#6c757d', 
+            color: 'white', 
+            border: 'none', 
             borderRadius: '4px',
             cursor: 'pointer'
           }}
@@ -116,7 +133,6 @@ function ProductList() {
         </button>
       </div>
 
-      {/* Results Count */}
       <p style={{ marginBottom: '20px', color: '#666' }}>
         Showing {filteredProducts.length} of {products.length} products
       </p>
@@ -130,10 +146,10 @@ function ProductList() {
           <p>No products found matching your search criteria.</p>
         </div>
       ) : (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: '20px'
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', 
+          gap: '24px' 
         }}>
           {filteredProducts.map((product) => {
             const stockCount = Number(product.stock);
@@ -142,20 +158,26 @@ function ProductList() {
             return (
               <div
                 key={product.id}
-                style={{
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '15px',
+                style={{ 
+                  border: '1px solid #e0e0e0', 
+                  borderRadius: '12px', 
+                  padding: '20px',
                   backgroundColor: 'white',
-                  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                  transition: 'transform 0.2s',
-                  cursor: 'pointer'
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
+                  overflow: 'hidden'
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                }}
               >
-                {/* Product Image */}
-                <div style={{ marginBottom: '15px', textAlign: 'center' }}>
+                <div style={{ marginBottom: '16px', textAlign: 'center', position: 'relative' }}>
                   {product.imageUrl ? (
                     <img
                       src={product.imageUrl}
@@ -164,8 +186,10 @@ function ProductList() {
                         width: '100%',
                         height: '200px',
                         objectFit: 'cover',
-                        borderRadius: '4px',
-                        backgroundColor: '#f0f0f0'
+                        borderRadius: '8px',
+                        backgroundColor: '#f0f0f0',
+                        border: '1px solid #f0f0f0',
+                        filter: inStock ? 'none' : 'grayscale(100%) opacity(0.6)'
                       }}
                       onError={(e) => { e.target.src = 'https://via.placeholder.com/280x200?text=No+Image'; }}
                     />
@@ -174,60 +198,117 @@ function ProductList() {
                       width: '100%',
                       height: '200px',
                       backgroundColor: '#f0f0f0',
-                      borderRadius: '4px',
+                      borderRadius: '8px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: '#666'
+                      color: '#999',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      border: '1px solid #e0e0e0'
                     }}>
                       No Image
                     </div>
                   )}
                 </div>
 
-                {/* Product Info */}
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '18px', color: '#333' }}>
+                <h3 style={{ 
+                  margin: '0 0 8px 0', 
+                  fontSize: '20px', 
+                  fontWeight: '600', 
+                  color: '#1a1a1a',
+                  lineHeight: '1.3'
+                }}>
                   {product.name}
                 </h3>
-                <p style={{ margin: '0 0 10px 0', color: '#666', fontSize: '14px', lineHeight: '1.4' }}>
+                
+                <p style={{ 
+                  margin: '0 0 12px 0', 
+                  color: '#757575', 
+                  fontSize: '14px', 
+                  lineHeight: '1.5',
+                  minHeight: '42px'
+                }}>
                   {product.description && product.description.length > 100
                     ? product.description.substring(0, 100) + '...'
                     : product.description || 'No description available'}
                 </p>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center', 
+                  marginBottom: '16px',
+                  gap: '8px'
+                }}>
                   <span style={{
-                    backgroundColor: '#e9ecef',
-                    padding: '4px 8px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    color: '#495057'
+                    backgroundColor: '#007bff',
+                    color: 'white',
+                    padding: '6px 12px',
+                    borderRadius: '16px',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
                   }}>
                     {product.category}
                   </span>
                   <span style={{
                     fontSize: '12px',
-                    color: inStock ? '#28a745' : '#dc3545'
+                    fontWeight: '600',
+                    padding: '6px 12px',
+                    borderRadius: '16px',
+                    backgroundColor: inStock ? '#d4edda' : '#f8d7da',
+                    color: inStock ? '#155724' : '#721c24'
                   }}>
                     {inStock ? `${stockCount} in stock` : 'Out of stock'}
                   </span>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#28a745' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  marginTop: '16px'
+                }}>
+                  <span style={{ 
+                    fontSize: '28px', 
+                    fontWeight: '700', 
+                    color: '#198754',
+                    letterSpacing: '-0.5px'
+                  }}>
                     ${product.price}
                   </span>
+                  
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={!inStock}
                     style={{
-                      padding: '10px 15px',
-                      backgroundColor: inStock ? '#28a745' : '#6c757d',
+                      padding: '12px 20px',
+                      backgroundColor: inStock ? '#198754' : '#6c757d',
                       color: 'white',
                       border: 'none',
-                      borderRadius: '4px',
+                      borderRadius: '8px',
                       cursor: inStock ? 'pointer' : 'not-allowed',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s ease',
+                      boxShadow: inStock ? '0 2px 4px rgba(25, 135, 84, 0.3)' : 'none',
+                      opacity: inStock ? 1 : 0.6
+                    }}
+                    onMouseEnter={(e) => {
+                      if (inStock) {
+                        e.currentTarget.style.backgroundColor = '#157347';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(25, 135, 84, 0.4)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (inStock) {
+                        e.currentTarget.style.backgroundColor = '#198754';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(25, 135, 84, 0.3)';
+                      }
                     }}
                   >
                     {inStock ? 'Add to Cart' : 'Out of Stock'}

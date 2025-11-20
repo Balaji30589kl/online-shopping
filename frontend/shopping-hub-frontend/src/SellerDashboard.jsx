@@ -35,17 +35,39 @@ function SellerDashboard({ onLogout }) {
       </header>
 
       {/* Navigation Tabs */}
-      <div style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
+      <div style={{ 
+        marginBottom: '24px', 
+        borderBottom: '2px solid #e9ecef',
+        display: 'flex',
+        gap: '8px',
+        paddingBottom: '4px'
+      }}>
         <button 
           onClick={() => setActiveTab('products')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'products' ? '#28a745' : '#f8f9fa',
-            color: activeTab === 'products' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'products' ? '#28a745' : 'transparent',
+            color: activeTab === 'products' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            marginRight: '5px'
+            fontWeight: activeTab === 'products' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'products' ? '0 -2px 8px rgba(40, 167, 69, 0.2)' : 'none',
+            transform: activeTab === 'products' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'products') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#28a745';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'products') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           My Products
@@ -53,13 +75,29 @@ function SellerDashboard({ onLogout }) {
         <button 
           onClick={() => setActiveTab('orders')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'orders' ? '#28a745' : '#f8f9fa',
-            color: activeTab === 'orders' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'orders' ? '#28a745' : 'transparent',
+            color: activeTab === 'orders' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            marginRight: '5px'
+            fontWeight: activeTab === 'orders' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'orders' ? '0 -2px 8px rgba(40, 167, 69, 0.2)' : 'none',
+            transform: activeTab === 'orders' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'orders') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#28a745';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'orders') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           Orders & Sales
@@ -67,12 +105,29 @@ function SellerDashboard({ onLogout }) {
         <button 
           onClick={() => setActiveTab('account')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'account' ? '#28a745' : '#f8f9fa',
-            color: activeTab === 'account' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
-            cursor: 'pointer'
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'account' ? '#28a745' : 'transparent',
+            color: activeTab === 'account' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
+            cursor: 'pointer',
+            fontWeight: activeTab === 'account' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'account' ? '0 -2px 8px rgba(40, 167, 69, 0.2)' : 'none',
+            transform: activeTab === 'account' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'account') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#28a745';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'account') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           Account

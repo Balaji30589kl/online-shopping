@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { getAuthHeader, getUsername, logout } from './authUtils';
 import ProductList from './ProductList';
+import Cart from './Cart';
+import Checkout from './Checkout';
+import OrderHistory from './OrderHistory';
 
 function UserDashboard({ onLogout }) {
   const [message, setMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('browse'); // Default to browse products
+  const [activeTab, setActiveTab] = useState('browse');
   const username = getUsername();
 
   const fetchUserData = async () => {
@@ -27,6 +30,14 @@ function UserDashboard({ onLogout }) {
     }
   };
 
+  const handleCheckout = () => {
+    setActiveTab('checkout');
+  };
+
+  const handleOrderPlaced = () => {
+    setActiveTab('orders');
+  };
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <header style={{ borderBottom: '2px solid #007bff', paddingBottom: '10px', marginBottom: '20px' }}>
@@ -35,17 +46,39 @@ function UserDashboard({ onLogout }) {
       </header>
 
       {/* Navigation Tabs */}
-      <div style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
+      <div style={{ 
+        marginBottom: '24px', 
+        borderBottom: '2px solid #e9ecef',
+        display: 'flex',
+        gap: '8px',
+        paddingBottom: '4px'
+      }}>
         <button 
           onClick={() => setActiveTab('browse')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'browse' ? '#007bff' : '#f8f9fa',
-            color: activeTab === 'browse' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'browse' ? '#007bff' : 'transparent',
+            color: activeTab === 'browse' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            marginRight: '5px'
+            fontWeight: activeTab === 'browse' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'browse' ? '0 -2px 8px rgba(0, 123, 255, 0.2)' : 'none',
+            transform: activeTab === 'browse' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'browse') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#007bff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'browse') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           Browse Products
@@ -53,27 +86,89 @@ function UserDashboard({ onLogout }) {
         <button 
           onClick={() => setActiveTab('cart')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'cart' ? '#007bff' : '#f8f9fa',
-            color: activeTab === 'cart' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'cart' ? '#007bff' : 'transparent',
+            color: activeTab === 'cart' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            marginRight: '5px'
+            fontWeight: activeTab === 'cart' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'cart' ? '0 -2px 8px rgba(0, 123, 255, 0.2)' : 'none',
+            transform: activeTab === 'cart' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'cart') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#007bff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'cart') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           My Cart
         </button>
         <button 
+          onClick={() => setActiveTab('checkout')}
+          style={{ 
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'checkout' ? '#007bff' : 'transparent',
+            color: activeTab === 'checkout' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
+            cursor: 'pointer',
+            fontWeight: activeTab === 'checkout' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'checkout' ? '0 -2px 8px rgba(0, 123, 255, 0.2)' : 'none',
+            transform: activeTab === 'checkout' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'checkout') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#007bff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'checkout') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
+          }}
+        >
+          Checkout
+        </button>
+        <button 
           onClick={() => setActiveTab('orders')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'orders' ? '#007bff' : '#f8f9fa',
-            color: activeTab === 'orders' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'orders' ? '#007bff' : 'transparent',
+            color: activeTab === 'orders' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            marginRight: '5px'
+            fontWeight: activeTab === 'orders' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'orders' ? '0 -2px 8px rgba(0, 123, 255, 0.2)' : 'none',
+            transform: activeTab === 'orders' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'orders') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#007bff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'orders') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           My Orders
@@ -81,12 +176,29 @@ function UserDashboard({ onLogout }) {
         <button 
           onClick={() => setActiveTab('account')}
           style={{ 
-            padding: '10px 20px', 
-            backgroundColor: activeTab === 'account' ? '#007bff' : '#f8f9fa',
-            color: activeTab === 'account' ? 'white' : '#333',
-            border: '1px solid #ddd',
-            borderBottom: 'none',
-            cursor: 'pointer'
+            padding: '12px 24px', 
+            backgroundColor: activeTab === 'account' ? '#007bff' : 'transparent',
+            color: activeTab === 'account' ? 'white' : '#495057',
+            border: 'none',
+            borderRadius: '8px 8px 0 0',
+            cursor: 'pointer',
+            fontWeight: activeTab === 'account' ? '600' : '500',
+            fontSize: '15px',
+            transition: 'all 0.2s ease',
+            boxShadow: activeTab === 'account' ? '0 -2px 8px rgba(0, 123, 255, 0.2)' : 'none',
+            transform: activeTab === 'account' ? 'translateY(-2px)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (activeTab !== 'account') {
+              e.currentTarget.style.backgroundColor = '#f8f9fa';
+              e.currentTarget.style.color = '#007bff';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (activeTab !== 'account') {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = '#495057';
+            }
           }}
         >
           Account
@@ -94,23 +206,13 @@ function UserDashboard({ onLogout }) {
       </div>
 
       {/* Tab Content */}
-      {activeTab === 'browse' && (
-        <ProductList />
-      )}
-
-      {activeTab === 'cart' && (
-        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px', textAlign: 'center' }}>
-          <h3>Shopping Cart</h3>
-          <p>Cart functionality coming soon!</p>
-        </div>
-      )}
-
-      {activeTab === 'orders' && (
-        <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px', textAlign: 'center' }}>
-          <h3>My Orders</h3>
-          <p>Order history coming soon!</p>
-        </div>
-      )}
+      {activeTab === 'browse' && <ProductList />}
+      
+      {activeTab === 'cart' && <Cart onCheckout={handleCheckout} />}
+      
+      {activeTab === 'checkout' && <Checkout onOrderPlaced={handleOrderPlaced} />}
+      
+      {activeTab === 'orders' && <OrderHistory />}
 
       {activeTab === 'account' && (
         <div style={{ padding: '20px', border: '1px solid #ddd', borderRadius: '5px' }}>
