@@ -13,9 +13,24 @@ function SellerProductList() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      // For now using sellerId = 1, later we'll get from auth
+      // SAFE-FIX: Replaced hardcoded userId=1 with dynamic userId from localStorage.
+      const userId = (() => {
+        const id = localStorage.getItem("userId");
+        if (!id) {
+          console.warn("SAFE-FIX WARNING: userId is missing in localStorage. Backend needs to send userId in login response.");
+          return null;
+        }
+        return parseInt(id, 10);
+      })();
+
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      // Fetch seller's products
       const response = await axios.get(
-        'http://localhost:8081/api/products/seller/1',
+        `http://localhost:8081/api/products/seller/${userId}`,
         { headers: getAuthHeader() }
       );
       setProducts(response.data);

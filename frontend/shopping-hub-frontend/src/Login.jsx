@@ -27,6 +27,8 @@ function Login({ onLoginSuccess }) {
         localStorage.setItem('jwtToken', response.data.token);
         localStorage.setItem('username', response.data.username);
         localStorage.setItem('userRole', response.data.role);
+        // Save userId for API calls
+        localStorage.setItem('userId', response.data.userId);
         
         setMessage(`Welcome back, ${response.data.username}!`);
         setFormData({ usernameOrEmail: '', password: '' });

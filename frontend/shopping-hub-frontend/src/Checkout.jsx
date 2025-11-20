@@ -16,11 +16,27 @@ function Checkout({ onOrderPlaced }) {
 
     setLoading(true);
     try {
-      // Place order for userId = 1
+      // SAFE-FIX: Replaced hardcoded userId=1 with dynamic userId from localStorage.
+      const userId = (() => {
+        const id = localStorage.getItem("userId");
+        if (!id) {
+          console.warn("SAFE-FIX WARNING: userId is missing in localStorage. Backend needs to send userId in login response.");
+          return null;
+        }
+        return parseInt(id, 10);
+      })();
+
+      if (!userId) {
+        alert('Please login to place an order.');
+        setLoading(false);
+        return;
+      }
+
+      // Place order for userId
       const response = await axios.post(
         'http://localhost:8081/api/orders/place',
         {
-          userId: 1,
+          userId: userId,
           shippingAddress: shippingAddress
         },
         { headers: getAuthHeader() }

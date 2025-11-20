@@ -3,6 +3,16 @@ import axios from 'axios';
 import { getAuthHeader } from './authUtils';
 
 function ProductForm({ existingProduct, onSave, onCancel }) {
+  // SAFE-FIX: Replaced hardcoded userId=1 with dynamic userId from localStorage.
+  const userId = (() => {
+    const id = localStorage.getItem("userId");
+    if (!id) {
+      console.warn("SAFE-FIX WARNING: userId is missing in localStorage. Backend needs to send userId in login response.");
+      return null;
+    }
+    return parseInt(id, 10);
+  })();
+
   const [product, setProduct] = useState({
     name: '',
     description: '',
@@ -10,7 +20,7 @@ function ProductForm({ existingProduct, onSave, onCancel }) {
     stock: '',
     category: '',
     imageUrl: '',
-    sellerId: 1 // We'll improve this later to get from logged-in user
+    sellerId: userId // Dynamic sellerId from localStorage
   });
 
   const [loading, setLoading] = useState(false);

@@ -12,8 +12,23 @@ function OrderHistory() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      // Get orders for userId = 1
-      const response = await axios.get('http://localhost:8081/api/orders/user/1', {
+      // SAFE-FIX: Replaced hardcoded userId=1 with dynamic userId from localStorage.
+      const userId = (() => {
+        const id = localStorage.getItem("userId");
+        if (!id) {
+          console.warn("SAFE-FIX WARNING: userId is missing in localStorage. Backend needs to send userId in login response.");
+          return null;
+        }
+        return parseInt(id, 10);
+      })();
+
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      // Get orders for userId
+      const response = await axios.get(`http://localhost:8081/api/orders/user/${userId}`, {
         headers: getAuthHeader()
       });
       setOrders(response.data);

@@ -99,7 +99,7 @@ public class UserService {
 
         // Generate JWT token with role and return success response
         String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-        return new LoginResponse(token, user.getUsername(), user.getRole().toString(), "Login successful!");
+        return new LoginResponse(token, user.getUsername(), user.getRole().toString(), "Login successful!", user.getId());
     }
 
 

@@ -52,11 +52,25 @@ function ProductList() {
 
   const handleAddToCart = async (product) => {
     try {
-      // For now using userId = 1, later get from auth
+      // SAFE-FIX: Replaced hardcoded userId=1 with dynamic userId from localStorage.
+      const userId = (() => {
+        const id = localStorage.getItem("userId");
+        if (!id) {
+          console.warn("SAFE-FIX WARNING: userId is missing in localStorage. Backend needs to send userId in login response.");
+          return null;
+        }
+        return parseInt(id, 10);
+      })();
+
+      if (!userId) {
+        alert('Please login to add items to cart.');
+        return;
+      }
+
       await axios.post(
         'http://localhost:8081/api/cart/add',
         {
-          userId: 1,
+          userId: userId,
           productId: product.id,
           quantity: 1
         },

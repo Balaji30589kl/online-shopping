@@ -12,8 +12,23 @@ function Cart({ onCheckout }) {
   const fetchCart = async () => {
     setLoading(true);
     try {
-      // Get cart items for userId = 1
-      const cartResponse = await axios.get('http://localhost:8081/api/cart/user/1', {
+      // SAFE-FIX: Replaced hardcoded userId=1 with dynamic userId from localStorage.
+      const userId = (() => {
+        const id = localStorage.getItem("userId");
+        if (!id) {
+          console.warn("SAFE-FIX WARNING: userId is missing in localStorage. Backend needs to send userId in login response.");
+          return null;
+        }
+        return parseInt(id, 10);
+      })();
+
+      if (!userId) {
+        setLoading(false);
+        return;
+      }
+
+      // Get cart items for userId
+      const cartResponse = await axios.get(`http://localhost:8081/api/cart/user/${userId}`, {
         headers: getAuthHeader()
       });
       
